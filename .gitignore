@@ -1,0 +1,11 @@
+
+.DS_Store
+lib/libmlv.a
+lib/libmlv.so
+lib/lj92.o
+lib/MLVDataSource.o
+lib/MLVFrameUtils.o
+lib/MLVReader.o
+lib/MLVWriter.o
+programs/raw2mlv/LibRaw/
+programs/raw2mlv/libraw_r.a
