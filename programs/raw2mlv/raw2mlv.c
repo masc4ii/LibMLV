@@ -78,6 +78,8 @@ int limit_multiple_of_8(int value)
 
 void do_binning(uint16_t * unbinned_image, uint16_t * binned_image, int binning_x, int binning_y, int width, int height)
 {
+    //printf("binning start %d %d %d %d\n",binning_x, binning_y, width, height);
+
     if (binning_x == 1 && binning_y == 1)
         memcpy(binned_image, unbinned_image, width*height*sizeof(uint16_t));
     else {
@@ -104,6 +106,7 @@ void do_binning(uint16_t * unbinned_image, uint16_t * binned_image, int binning_
             }
         }
     }
+    //puts("binning end");
 }
 
 int main(int argc, char ** argv)
@@ -200,6 +203,7 @@ int main(int argc, char ** argv)
 
             width = limit_multiple_of_8(RawGetWidth(raw) / binning);
             height = RawGetHeight(raw) / binning;
+            printf("original CFA 0x%08x, new width %d, new height %d, bl %d\n", RawGetCfa(raw), width, height, RawGetBlackLevel(raw));
 
             packed_frame_data = malloc((width * height * output_bits) / 8);
 
@@ -225,7 +229,8 @@ int main(int argc, char ** argv)
             /* If no matrix found from adobe, use libraw one (most likely the same) */
             if (mat != NULL){puts("marix");
                 camera_matrix = mat->ColorMatrix2;}
-            else{puts("no marix");
+            else
+            {puts("no marix");
                 camera_matrix = RawGetMatrix(raw);}
 
             MLVWriterSetCameraInfo( writer,
@@ -271,6 +276,7 @@ int main(int argc, char ** argv)
 
         uint16_t * bayerimage = malloc(width * height * sizeof(uint16_t));
 
+        //printf( "w/h %d %d\n", width, height );
         do_binning(unbinned_image, bayerimage, binning, binning, RawGetWidth(raw), RawGetHeight(raw));
 
         if (output_bits < source_bitdepth)

@@ -11,6 +11,7 @@ typedef struct {
 
     int width;
     int height;
+    int cfa;
 } RawReader_t;
 
 int init_RawReader(RawReader_t * Raw, char * File)
@@ -32,11 +33,10 @@ int init_RawReader(RawReader_t * Raw, char * File)
     }
 
     /* Get matrix */
-    double mat1[9];
     for (int y = 0; y < 3; ++y) {
         for (int x = 0; x < 3; ++x) {
             printf("%3.5f, ", libraw->rawdata.color.cam_xyz[y][x]);
-            mat1[y*3+x] = libraw->rawdata.color.cam_xyz[y][x];
+            Raw->matrix[y*3+x] = libraw->rawdata.color.cam_xyz[y][x];
         } printf("\n");
     }
 
@@ -59,17 +59,17 @@ int init_RawReader(RawReader_t * Raw, char * File)
     switch (top_pixel) {
         case 1:
             crop_left += 1;
-            width -= 1;
+            width -= 8;
             break;
         case 3:
             crop_top += 1;
-            height -= 1;
+            height -= 8;
             break;
         case 2:
             crop_top += 1;
-            height -= 1;
+            height -= 8;
             crop_left += 1;
-            width -= 1;
+            width -= 8;
             break;
     }
     #endif
@@ -89,6 +89,22 @@ int init_RawReader(RawReader_t * Raw, char * File)
 
     Raw->width = width;
     Raw->height = height;
+
+    int cfa = 0;
+    int cfarray[2][2];
+    for( int i = 0; i < 2; i++ )
+    {
+        for( int j = 0; j < 2; j++ )
+        {
+            cfarray[i][j] = libraw_COLOR(libraw, i, j);
+            if( cfarray[i][j] > 2 ) cfarray[i][j] = 1; //G1 or G2 is a don't care for us, so G2 = G1 = G = 1
+        }
+    }
+    cfa += cfarray[0][0];
+    cfa += (cfarray[0][1]<<8);
+    cfa += (cfarray[1][0]<<16);
+    cfa += (cfarray[1][1]<<24);
+    Raw->cfa = cfa;
 
     Raw->libraw = libraw;
     return 0;
@@ -148,4 +164,9 @@ char * RawGetCamName(RawReader_t * Raw)
 void RawGetTime(RawReader_t * Raw, time_t * TimeOutput)
 {
     memcpy(TimeOutput, &Raw->libraw->other.timestamp, sizeof(time_t));
+}
+
+int RawGetCfa(RawReader_t * Raw)
+{
+    return Raw->cfa;
 }

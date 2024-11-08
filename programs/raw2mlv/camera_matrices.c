@@ -10109,7 +10109,20 @@ CameraMatrixInfo_t all_camera_matrices[] =
             -0.8339,  1.5817,  0.2695,
             -0.0837,  0.0680,  1.1939
         }
-    }
+    }/*,
+    {
+        "MotionCam",
+        {
+            0.0127, 0.0727, 0.5789,
+            -0.2806, 1.0683, 0.2451,
+            1.2341, -0.6660, 0.0994
+        },
+        {
+            -0.0558, 0.1620, 0.5206,
+            -0.3982, 1.2675, 0.1412,
+            1.0612, -0.4169, -0.1001
+        }
+    }*/
 };
 
 #define NumCameras sizeof(all_camera_matrices)/sizeof(all_camera_matrices[0])
@@ -10214,7 +10227,7 @@ CameraMatrixInfo_t * FindCameraMatrixInfo(char * CameraName)
     }
     else
     {
-        puts("No matrix found");
+        printf("No matrix found \"%s\"\n", CameraName);
     }
 
     return camera_matrix;
