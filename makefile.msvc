@@ -4,7 +4,7 @@ NAME=libmlv
 OBJ_FOLDER=lib
 
 main: $(OBJ_FOLDER)/MLVWriter.obj $(OBJ_FOLDER)/MLVReader.obj $(OBJ_FOLDER)/MLVFrameUtils.obj $(OBJ_FOLDER)/MLVDataSource.obj $(OBJ_FOLDER)/lj92.obj
-	LIB $(OBJFOLDER)/*.obj /OUT:$(OBJ_FOLDER)/$(NAME).lib
+	lib /OUT:$(OBJ_FOLDER)/$(NAME).lib $(OBJ_FOLDER)/*.obj
 	LINK /DLL $(OBJ_FOLDER)/*.obj /OUT:$(OBJ_FOLDER)/$(NAME).dll
 
 $(OBJ_FOLDER)/MLVWriter.obj: src/MLVWriter.c include/MLVWriter.h src/liblj92/lj92.h include/MLVFrameUtils.h
